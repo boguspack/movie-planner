@@ -1,0 +1,60 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Movie Selector</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add your Movie</h1>
+      <div id="movie-display">
+        <form id="movie-form">
+          <label for="name">Name:</label><br />
+          <input type="text" id="name" name="name" required /><br /><br />
+          <button id="select-movie-btn" type="submit">submit</button>
+        </form>
+      </div>
+    
+      <a href="index.html"> <button id="select-movie-btn">press</button> </a>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDLf4Z32y8_9TP-vNTxrK2SoGwn1GFz2rM",
+        authDomain: "movie-planner-5baac.firebaseapp.com",
+        projectId: "movie-planner-5baac",
+        storageBucket: "movie-planner-5baac.appspot.com",
+        messagingSenderId: "114532945774",
+        appId: "1:114532945774:web:b36e6876018fcba583bb7f",
+        measurementId: "G-CRLM3P5D1E",
+      };
+
+      
+      const app = initializeApp(firebaseConfig);
+      const firestore = getFirestore(app);
+
+      document
+        .getElementById("movie-form").addEventListener("submit", function (event) {
+          event.preventDefault();
+          const movie = document.getElementById("name").value;
+
+          addDoc(collection(firestore, "movies"), { name: movie })
+            .then(() => {
+              console.log("movie successfully added");
+              document.getElementById("movie-form").reset();
+            })
+            .catch((error) => {
+              console.error("movie failed", error);
+            });
+        });
+    </script>
+  </body>
+</html>

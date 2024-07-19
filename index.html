@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Movie Selector</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Random Movie Selector</h1>
+      <form id="movie-form">
+        <div id="movie-display">
+          <p id="movie-name">Press the button to get a random movie!</p>
+        </div>
+       
+        <button id="getrandom" type="button">Get Random Movie</button>
+      </form>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDLf4Z32y8_9TP-vNTxrK2SoGwn1GFz2rM",
+        authDomain: "movie-planner-5baac.firebaseapp.com",
+        projectId: "movie-planner-5baac",
+        storageBucket: "movie-planner-5baac.appspot.com",
+        messagingSenderId: "114532945774",
+        appId: "1:114532945774:web:b36e6876018fcba583bb7f",
+        measurementId: "G-CRLM3P5D1E",
+      };
+
+      
+      const app = initializeApp(firebaseConfig);
+      const firestore = getFirestore(app);
+
+      async function getRandomMovie() {
+        try {
+          const moviesRef = collection(firestore, "movies");
+          const movieSnapshot = await getDocs(moviesRef);
+
+          if (movieSnapshot.empty) {
+            console.log("No movies available in the database.");
+            return "No movies found";
+          }
+
+          const movies = [];
+          movieSnapshot.forEach((doc) => {
+            movies.push(doc.data().name);
+          });
+
+          const randomIndex = Math.floor(Math.random() * movies.length);
+          const randomMovie = movies[randomIndex];
+
+          return randomMovie;
+        } catch (error) {
+          console.error("Error fetching movies: ", error);
+          return "Error fetching movies";
+        }
+      }
+      document
+        .getElementById("getrandom")
+        .addEventListener("click", async (event) => {
+          event.preventDefault(); 
+          const displayMovie = await getRandomMovie();
+          document.getElementById("movie-name").innerText = displayMovie;
+        });
+    </script>
+  </body>
+</html>
